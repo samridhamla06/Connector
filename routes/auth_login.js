@@ -14,7 +14,7 @@ var getPayLoad = function(myJson) {
         catch (e) {
             if (e.name == 'TokenExpiredError') {
                 console.log('token is expired');
-                //NEED TO CHANGE...session expired...Chances rare***********************Generate a new active token
+                //NEED TO CHANGE...session expired...Chances rare***********************Generate a new active token and retrun that
             } else {
                //invalid token
                 console.log('token is invalid');
