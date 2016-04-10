@@ -36,7 +36,7 @@ var sendResponse = function(err,record){
    var suffering = record.suffering;//-----------------------------RETRIEVING suffering TO ADD LATER ON IN TOKEN PAYLOAD
    var username =  record.username;
    var name = record.name;
-   var expiryTime = 60 * 60;
+   var expiryTime = 60*60;
 
 
    signToken(username,expiryTime,suffering,name);

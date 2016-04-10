@@ -4,8 +4,8 @@ var registerObject = require(__dirname + '/routes/register.js');
 var groupsObject = require(__dirname + '/routes/groups.js');
 var loginObject = require(__dirname + '/routes/login.js');
 var authLoginObject = require(__dirname + '/routes/auth_login.js');
-var groupsDescObject = require(__dirname + '/routes/group_description.js');
-var userDescObject = require(__dirname + '/routes/user_description.js');
+var usersObject = require(__dirname + '/routes/users.js');
+var userDescriptionObject = require(__dirname + '/routes/user_description.js');
 var checkAuthorizationObject = require(__dirname + '/routes/checkAuthorization.js');
 
 var app = express();
@@ -15,9 +15,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/*',checkAuthorizationObject.validateCredentials);
-app.get('/groups/:gid',groupsDescObject.retrieveUsers);//put authorization
-app.get('/users/:userId',userDescObject.getUserInfo);//put authorization
-app.get('/readGroups',groupsObject.read);
+app.get('/groups/:gid',usersObject.retrieveUsers);//put authorization
+app.get('/users/:userId',userDescriptionObject.getUserInfo);//put authorization
+app.get('/readGroups/:sufferingName',groupsObject.read);
 
 app.post('/register',registerObject.register);//middleware should check if username already exists.
 app.post('/login',loginObject.login);

@@ -3,7 +3,7 @@ const server_key = "sjasadbhfdbadfkjmslkdaskasslksdnlksdala";
 var payload;
 
 
-var getPayLoad = function(token) {//myJson is the token basically
+var getPayLoad = function(token,next) {//myJson is the token basically
        try {
             payload = jwt.verify(token, server_key); // throws exception if not matched
             return payload;
@@ -11,8 +11,7 @@ var getPayLoad = function(token) {//myJson is the token basically
         catch (e) {
             if (e.name == 'TokenExpiredError') {
                 console.log('token is expired');
-                //NEED TO CHANGE...session expired...Chances rare***********************Generate a new active token
-                //and rerun that
+                return {"status":"Valid"};
             } else {
                //invalid token
                 console.log('token is invalid');
@@ -27,7 +26,7 @@ exports.validateCredentials= function(req,res,next){
     //1st chk if already existing username
     console.log('Token received is ' + req.headers.authorization);
    if(req.headers.authorization){
-    var payload = getPayLoad(req.headers.authorization);
+    var payload = getPayLoad(req.headers.authorization,next);
     if(payload){
         console.log('Token is valid');
         next();
