@@ -7,6 +7,8 @@ var authLoginObject = require(__dirname + '/routes/auth_login.js');
 var usersObject = require(__dirname + '/routes/users.js');
 var userDescriptionObject = require(__dirname + '/routes/user_description.js');
 var checkAuthorizationObject = require(__dirname + '/routes/checkAuthorization.js');
+var addGroupObject = require(__dirname + '/routes/addGroup.js');
+
 
 var app = express();
 app.use(bodyParser.json());
@@ -21,6 +23,7 @@ app.get('/readGroups/:sufferingName',groupsObject.read);
 
 app.post('/register',registerObject.register);//middleware should check if username already exists.
 app.post('/login',loginObject.login);
+app.post('/addGroup',addGroupObject.addNewGroup);//ADD AUTHENTICATION
 
 
 

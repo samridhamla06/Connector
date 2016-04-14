@@ -8,7 +8,7 @@ var getListOfUsers = function(gid,db, callback){
     console.log('in getListOFUsers '+ gid);
 
     var collection = db.collection('Groups');
-    var cursor = collection.find({'gid':gid},{'users':1,'_id':0});
+    var cursor = collection.find({'_id':gid},{'users':1,'_id':0});
     cursor.toArray(callback);
 }
 var readFromMongoDB = function(gid,callback){
@@ -28,7 +28,7 @@ exports.retrieveUsers = function(req,res) {
 
 
     if (req.params.gid) {
-        var gid = parseInt(req.params.gid);
+        var gid = req.params.gid;
         console.log('requested_gid is ' + gid);
         //var gid = 1;
         readFromMongoDB(gid, function (err, result) {

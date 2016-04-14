@@ -5,7 +5,7 @@ var mongoClient = require('../database/mongoClient.js');
 var mongoURL = "mongodb://localhost:27017/DCDS";
 
 var getInfoForSelectedID = function (db,userId, callback) {
-    var cursor = db.collection('All_Users').find({"userId":userId},{"_id":0,"password":0});
+    var cursor = db.collection('All_Users').find({"_id":userId},{"password":0});
     cursor.limit(1);//not to get more than one ....even if accidently there are :(..hawwww
     cursor.toArray(callback);
 };
@@ -34,7 +34,7 @@ exports.getUserInfo = function(req,res) {
     }
 
     if (req.params.userId) {
-        var userId = parseInt(req.params.userId);
+        var userId = req.params.userId;
         console.log('requested_userId is ' + userId);
         readFromMongoDB(userId,sendResponse);
     }else{

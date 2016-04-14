@@ -5,13 +5,12 @@ const server_key = "sjasadbhfdbadfkjmslkdaskasslksdnlksdala";
 var payLoad = new Object();
 var token;
 
-var signToken = function(username,time,suffering,name){
-  payload = {"username": username,"admin": true,"suffering":suffering,"name":name};
+var signToken = function(email,time,suffering,userName){
+  payload = {"email": email,"admin": true,"suffering":suffering,"userName":userName};
   token = jwt.sign(payLoad,server_key,{expiresIn:time});
-  return token;
 }
 
-var validateCredentials = function(username,password,callback) {
+var validateCredentials = function(email,password,callback) {
   mongoClient.connect(mongoURL,function(err,db){
     if(err){
       console.log('couldnt connect to MongoDb');
@@ -19,29 +18,30 @@ var validateCredentials = function(username,password,callback) {
           }else {
             console.log('GOT CONNECTED TO MONGODB');
             var collection = db.collection('All_Users')
-            collection.findOne({"username": username,"password":password},callback);//can add function
+            collection.findOne({"email": email,"password":password},{"password":0},callback);//can add function
           }
         })
 
 }
 
 exports.login = function(req,res){
-  var username = req.body.username;
+  var email = req.body.email;
   var password = req.body.password;
-  console.log(username + ' trying to log in');
+  console.log(email + ' trying to log in');
 
 var sendResponse = function(err,record){
    if(!err && record){//-------------------------------------------FOUND THE MATCHING RECORD
-   console.log('Valid UserName with name : '+ record.username + ' And suffering is '+ record.suffering );
-   var suffering = record.suffering;//-----------------------------RETRIEVING suffering TO ADD LATER ON IN TOKEN PAYLOAD
-   var username =  record.username;
-   var name = record.name;
+
+   var sufferingName = record.sufferingName;//-----------------------------RETRIEVING suffering TO ADD LATER ON IN TOKEN PAYLOAD
+   var email =  record.email;
+   var userName = record.userName;
    var expiryTime = 60*60;
-
-
-   signToken(username,expiryTime,suffering,name);
-   console.log('the user ' + username + ' has logged in');
-   res.send({"status":"Valid","token":token,"suffering":suffering,"username":username,"name":name});
+   var userId = record._id;
+   var location = record.location
+   console.log('Valid user which is '+ JSON.stringify(record));
+   signToken(email,expiryTime,sufferingName,userName);
+   console.log('the user ' + userName + ' has logged in');
+   res.send({"status":"Valid","token":token,"sufferingName":sufferingName,"userName":userName,"userId":userId,"email":email,"location":location});
  }else {
    console.log('Invalid UserName');
    res.send({"status":"Invalid","token":null,"reason":"Invalid Username/Password"});
@@ -49,9 +49,9 @@ var sendResponse = function(err,record){
 }
 
 
-if(username && password){
-    validateCredentials(username,password,sendResponse)
+if(email && password){
+    validateCredentials(email,password,sendResponse)
   }else{
-    res.send({"status":"Invalid","token":null,"reason":"UserName or Password is Null"});
+    res.send({"status":"Invalid","token":null,"reason":"email or Password is Null"});
   }
 }

@@ -1,32 +1,28 @@
   var mongoClient = require('../database/mongoClient.js');
-  var mongoURL = "mongodb://localhost:27017/DCDS";
   var randomGenerator =require('../database/randomGenerator.js')
+  var mongoURL = "mongodb://localhost:27017/DCDS";
 
-
-
-  var insertUser = function(db,userData,callback) {
-    db.collection('All_Users').insert(userData,callback);
+  var insertGroup = function(db,groupData,callback) {
+    db.collection('Groups').insert(groupData,callback);
   }
 
-  var updateCommunity = function(db,userData,callback) {
-    var sufferingName = userData.suffering;
-    console.log('The suffering for the user is ' + sufferingName);
-    db.collection('Communities').update({"sufferingName":sufferingName},{$addToSet:{"users":userData}},callback);
+  var updateCommunity = function(db,groupData,callback) {
+    var sufferingName = groupData.sufferingName;
+    console.log('The suffering for the group is ' + sufferingName);
+    db.collection('Communities').update({"sufferingName":sufferingName},{$addToSet:{"groups":groupData}},callback);
   }
+
 
   var standardValidation = function(req){
-    return req.body && req.body.email && req.body.password && req.body.userName && req.body.location && req.body.sufferingName && req.body.currentStatus;
+    return req.body && req.body.groupName && req.body.sufferingName;
   }
 
-
-
-
-  exports.register = function(req,res){
+  exports.addNewGroup = function(req,res){
       //1st chk if already existing username//NEED TO DO EVENTUALLY------EVENTUALLYYYYYYY
 
       if(standardValidation(req)){
-        var userData = req.body;
-        randomGenerator.assignUniqueId(userData);
+        var groupData = req.body;
+        randomGenerator.assignUniqueId(groupData);
         mongoClient.connect(mongoURL,function(err,db) {
 
           var sendFinalResponse = function(err,result){
@@ -35,23 +31,23 @@
              res.send({"status": "Invalid","reason":"NO Connection TO MONGODB"});
            }
            else {
-            console.log('number of rows updated in Community' + result.n);
+            console.log('number of rows updated in Community' + result.count);
             res.send({"status": "Valid"});};}
 
-          var sendResponse = function (err,result) {
+          var updateIntoCommunities = function (err,result) {
           if (err) {
-            console.log('Couldnt connect to MONGODB while inserting User');
+            console.log('Couldnt connect to MONGODB while inserting Group');
             res.send({"status": "Invalid","reason":"NO Connection TO MONGODB"});
           } else {
             console.log('number of rows inserted ' + result.insertedCount);
-            updateCommunity(db,userData,sendFinalResponse);
+            updateCommunity(db,groupData,sendFinalResponse);
           }}
 
           if (err) {
             console.log('Couldnt connect to MONGODB');
             res.send({"status": "Invalid"});
           } else {
-            insertUser(db, userData, sendResponse);
+            insertGroup(db, groupData, updateIntoCommunities);
           }
         });
   console.log('the user ' + req.body.name + ' is registered');
